@@ -1,0 +1,585 @@
+name: Embarcaciones
+description: |-
+
+  Endpoints para consulta y gestión de embarcaciones.
+  Los endpoints de listado y disponibilidad son públicos.
+  Los endpoints de creación, actualización y eliminación requieren rol admin.
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/embarcaciones
+    metadata:
+      custom: []
+      groupName: Embarcaciones
+      groupDescription: |-
+
+        Endpoints para consulta y gestión de embarcaciones.
+        Los endpoints de listado y disponibilidad son públicos.
+        Los endpoints de creación, actualización y eliminación requieren rol admin.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Listar embarcaciones'
+      description: |-
+        Retorna todas las embarcaciones registradas ordenadas por nombre.
+        Endpoint público, no requiere autenticación.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "data": [
+              {
+                "id": 1,
+                "nombre": "Lancha Uleam I",
+                "capacidad": 25,
+                "estado": "disponible",
+                "descripcion": "Embarcación principal para recorridos académicos",
+                "imagen_url": "http://localhost:8000/storage/embarcaciones/lancha.jpg",
+                "creado_en": "09/04/2026"
+              }
+            ]
+          }
+        headers: []
+        description: Éxito
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/disponibilidad
+    metadata:
+      custom: []
+      groupName: Embarcaciones
+      groupDescription: |-
+
+        Endpoints para consulta y gestión de embarcaciones.
+        Los endpoints de listado y disponibilidad son públicos.
+        Los endpoints de creación, actualización y eliminación requieren rol admin.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Disponibilidad por fecha'
+      description: |-
+        Retorna la disponibilidad de cupos de todas las embarcaciones activas para una fecha específica.
+        Endpoint público, no requiere autenticación.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      fecha:
+        custom: []
+        name: fecha
+        description: 'Fecha a consultar (YYYY-MM-DD), debe ser hoy o futura.'
+        required: true
+        example: '2026-05-10'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      fecha: '2026-05-10'
+    bodyParameters:
+      fecha:
+        custom: []
+        name: fecha
+        description: 'validation.date validation.after_or_equal.'
+        required: true
+        example: '2107-05-14'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      fecha: '2107-05-14'
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "fecha": "2026-05-10",
+            "embarcaciones": [
+              {
+                "id": 1,
+                "nombre": "Lancha Uleam I",
+                "capacidad": 25,
+                "imagen_url": null,
+                "reservados": 10,
+                "disponibles": 15,
+                "disponible": true
+              }
+            ]
+          }
+        headers: []
+        description: Éxito
+      -
+        custom: []
+        status: 422
+        content: |-
+          {
+            "message": "Error de validación",
+            "errors": {"fecha": ["The fecha field must be a date after or equal to today."]}
+          }
+        headers: []
+        description: 'Fecha inválida'
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/embarcaciones/{id}'
+    metadata:
+      custom: []
+      groupName: Embarcaciones
+      groupDescription: |-
+
+        Endpoints para consulta y gestión de embarcaciones.
+        Los endpoints de listado y disponibilidad son públicos.
+        Los endpoints de creación, actualización y eliminación requieren rol admin.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Ver embarcación'
+      description: 'Retorna el detalle de una embarcación específica.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'ID de la embarcación.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "data": {
+              "id": 1,
+              "nombre": "Lancha Uleam I",
+              "capacidad": 25,
+              "estado": "disponible",
+              "descripcion": "Embarcación principal para recorridos académicos",
+              "imagen_url": null,
+              "creado_en": "09/04/2026"
+            }
+          }
+        headers: []
+        description: Éxito
+      -
+        custom: []
+        status: 404
+        content: '{"message": "Recurso no encontrado"}'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/admin/embarcaciones
+    metadata:
+      custom: []
+      groupName: Embarcaciones
+      groupDescription: |-
+
+        Endpoints para consulta y gestión de embarcaciones.
+        Los endpoints de listado y disponibilidad son públicos.
+        Los endpoints de creación, actualización y eliminación requieren rol admin.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Crear embarcación'
+      description: |-
+        Crea una nueva embarcación en el sistema. Requiere rol admin.
+        Soporta subida de imagen en formato multipart/form-data.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: multipart/form-data
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      nombre:
+        custom: []
+        name: nombre
+        description: 'Nombre único de la embarcación.'
+        required: true
+        example: 'Lancha Uleam III'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      capacidad:
+        custom: []
+        name: capacidad
+        description: 'Capacidad máxima de pasajeros (1-500).'
+        required: true
+        example: 30
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      estado:
+        custom: []
+        name: estado
+        description: 'Estado inicial: disponible o mantenimiento (default: disponible).'
+        required: false
+        example: disponible
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      descripcion:
+        custom: []
+        name: descripcion
+        description: 'Descripción de la embarcación.'
+        required: false
+        example: 'Embarcación de transporte estudiantil'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+      imagen:
+        custom: []
+        name: imagen
+        description: 'Imagen de la embarcación (jpg, png, webp, max 2MB).'
+        required: false
+        example: null
+        type: file
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      nombre: 'Lancha Uleam III'
+      capacidad: 30
+      estado: disponible
+      descripcion: 'Embarcación de transporte estudiantil'
+    fileParameters:
+      imagen: null
+    responses:
+      -
+        custom: []
+        status: 201
+        content: |-
+          {
+            "message": "Embarcación creada correctamente",
+            "embarcacion": {
+              "id": 5,
+              "nombre": "Lancha Uleam III",
+              "capacidad": 30,
+              "estado": "disponible",
+              "descripcion": "Embarcación de transporte estudiantil",
+              "imagen_url": null,
+              "creado_en": "13/04/2026"
+            }
+          }
+        headers: []
+        description: Creada
+      -
+        custom: []
+        status: 422
+        content: |-
+          {
+            "message": "Error de validación",
+            "errors": {"nombre": ["The nombre has already been taken."]}
+          }
+        headers: []
+        description: 'Nombre duplicado'
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PUT
+    uri: 'api/admin/embarcaciones/{id}'
+    metadata:
+      custom: []
+      groupName: Embarcaciones
+      groupDescription: |-
+
+        Endpoints para consulta y gestión de embarcaciones.
+        Los endpoints de listado y disponibilidad son públicos.
+        Los endpoints de creación, actualización y eliminación requieren rol admin.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Actualizar embarcación'
+      description: |-
+        Actualiza los datos de una embarcación. Requiere rol admin.
+        No permite poner en mantenimiento si hay reservas futuras activas.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: multipart/form-data
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'ID de la embarcación.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      nombre:
+        custom: []
+        name: nombre
+        description: 'Nuevo nombre único.'
+        required: false
+        example: 'Lancha Uleam I Renovada'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      capacidad:
+        custom: []
+        name: capacidad
+        description: 'Nueva capacidad (1-500).'
+        required: false
+        example: 30
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      estado:
+        custom: []
+        name: estado
+        description: 'Nuevo estado: disponible o mantenimiento.'
+        required: false
+        example: mantenimiento
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      descripcion:
+        custom: []
+        name: descripcion
+        description: 'Nueva descripción.'
+        required: false
+        example: 'Embarcación renovada 2026'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: true
+        deprecated: false
+      imagen:
+        custom: []
+        name: imagen
+        description: 'Nueva imagen (jpg, png, webp, max 2MB).'
+        required: false
+        example: null
+        type: file
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+    cleanBodyParameters:
+      nombre: 'Lancha Uleam I Renovada'
+      capacidad: 30
+      estado: mantenimiento
+      descripcion: 'Embarcación renovada 2026'
+    fileParameters:
+      imagen: null
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "message": "Embarcación actualizada correctamente",
+            "embarcacion": {
+              "id": 1,
+              "nombre": "Lancha Uleam I Renovada",
+              "capacidad": 30,
+              "estado": "disponible"
+            }
+          }
+        headers: []
+        description: Actualizada
+      -
+        custom: []
+        status: 400
+        content: |-
+          {
+            "error": "No se puede poner en mantenimiento, hay reservas futuras activas",
+            "reservas_futuras": 3
+          }
+        headers: []
+        description: 'Reservas futuras'
+      -
+        custom: []
+        status: 404
+        content: '{"message": "Recurso no encontrado"}'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/admin/embarcaciones/{id}'
+    metadata:
+      custom: []
+      groupName: Embarcaciones
+      groupDescription: |-
+
+        Endpoints para consulta y gestión de embarcaciones.
+        Los endpoints de listado y disponibilidad son públicos.
+        Los endpoints de creación, actualización y eliminación requieren rol admin.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Eliminar embarcación'
+      description: |-
+        Elimina una embarcación del sistema. Requiere rol admin.
+        No permite eliminar si tiene reservas futuras activas.
+        Elimina también la imagen del storage si existe.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'ID de la embarcación.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{"message": "Embarcación eliminada correctamente"}'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 400
+        content: |-
+          {
+            "error": "No se puede eliminar, tiene reservas futuras activas",
+            "reservas_futuras": 2
+          }
+        headers: []
+        description: 'Reservas futuras'
+      -
+        custom: []
+        status: 404
+        content: '{"message": "Recurso no encontrado"}'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null

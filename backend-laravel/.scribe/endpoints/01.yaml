@@ -1,0 +1,207 @@
+name: 'Recuperación de contraseña'
+description: |-
+
+  Endpoints para solicitar y restablecer contraseña olvidada.
+  El flujo es: solicitar token por email → recibir código de 6 dígitos → restablecer contraseña.
+  El token expira en 60 minutos.
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/forgot-password
+    metadata:
+      custom: []
+      groupName: 'Recuperación de contraseña'
+      groupDescription: |-
+
+        Endpoints para solicitar y restablecer contraseña olvidada.
+        El flujo es: solicitar token por email → recibir código de 6 dígitos → restablecer contraseña.
+        El token expira en 60 minutos.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Solicitar recuperación de contraseña'
+      description: |-
+        Envía un código de 6 dígitos al correo registrado para restablecer la contraseña.
+        El código expira en 60 minutos.
+        Si ya existe un token anterior para ese email, se elimina y se genera uno nuevo.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      email:
+        custom: []
+        name: email
+        description: 'Correo electrónico registrado en el sistema.'
+        required: true
+        example: estudiante@uleam.edu.ec
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      email: estudiante@uleam.edu.ec
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{"message": "Correo de recuperación enviado."}'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 404
+        content: '{"message": "El correo no está registrado."}'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 422
+        content: |-
+          {
+            "message": "Error de validación",
+            "errors": {"email": ["The email field is required."]}
+          }
+        headers: []
+        description: Validación
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/reset-password
+    metadata:
+      custom: []
+      groupName: 'Recuperación de contraseña'
+      groupDescription: |-
+
+        Endpoints para solicitar y restablecer contraseña olvidada.
+        El flujo es: solicitar token por email → recibir código de 6 dígitos → restablecer contraseña.
+        El token expira en 60 minutos.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Restablecer contraseña'
+      description: |-
+        Restablece la contraseña usando el código de 6 dígitos recibido por email.
+        El token es de un solo uso — se elimina al ser utilizado.
+        El token expira a los 60 minutos de haber sido generado.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      email:
+        custom: []
+        name: email
+        description: 'Correo electrónico registrado.'
+        required: true
+        example: estudiante@uleam.edu.ec
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      token:
+        custom: []
+        name: token
+        description: 'Código de 6 dígitos recibido por email.'
+        required: true
+        example: A3F9K2
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      password:
+        custom: []
+        name: password
+        description: 'Nueva contraseña mínimo 6 caracteres.'
+        required: true
+        example: NuevoPass123!
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      password_confirmation:
+        custom: []
+        name: password_confirmation
+        description: 'Confirmación de nueva contraseña.'
+        required: true
+        example: NuevoPass123!
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      email: estudiante@uleam.edu.ec
+      token: A3F9K2
+      password: NuevoPass123!
+      password_confirmation: NuevoPass123!
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{"message": "Contraseña actualizada correctamente."}'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 400
+        content: '{"message": "Token inválido."}'
+        headers: []
+        description: 'Token inválido'
+      -
+        custom: []
+        status: 400
+        content: '{"message": "El token ha expirado."}'
+        headers: []
+        description: 'Token expirado'
+      -
+        custom: []
+        status: 404
+        content: '{"message": "Usuario no encontrado."}'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 422
+        content: |-
+          {
+            "message": "Error de validación",
+            "errors": {"password": ["The password field confirmation does not match."]}
+          }
+        headers: []
+        description: Validación
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null

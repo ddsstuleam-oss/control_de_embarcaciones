@@ -1,0 +1,465 @@
+name: Autenticación
+description: |-
+
+  Endpoints para registro, login, logout y gestión de contraseña.
+  El sistema usa Laravel Sanctum con tokens Bearer.
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/register
+    metadata:
+      custom: []
+      groupName: Autenticación
+      groupDescription: |-
+
+        Endpoints para registro, login, logout y gestión de contraseña.
+        El sistema usa Laravel Sanctum con tokens Bearer.
+      subgroup: ''
+      subgroupDescription: ''
+      title: Registro
+      description: |-
+        Registra un nuevo usuario en el sistema con rol `usuario` por defecto.
+        La cédula debe ser ecuatoriana válida (algoritmo del Registro Civil).
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      cedula:
+        custom: []
+        name: cedula
+        description: 'Cédula ecuatoriana válida de 10 dígitos.'
+        required: true
+        example: '1300000099'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      name:
+        custom: []
+        name: name
+        description: 'Nombre completo.'
+        required: true
+        example: 'Juan Carlos Pérez'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      email:
+        custom: []
+        name: email
+        description: 'Correo electrónico único.'
+        required: true
+        example: juan@uleam.edu.ec
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      password:
+        custom: []
+        name: password
+        description: 'Contraseña mínimo 8 caracteres.'
+        required: true
+        example: Password123!
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      password_confirmation:
+        custom: []
+        name: password_confirmation
+        description: 'Confirmación de contraseña.'
+        required: true
+        example: Password123!
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      cedula: '1300000099'
+      name: 'Juan Carlos Pérez'
+      email: juan@uleam.edu.ec
+      password: Password123!
+      password_confirmation: Password123!
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 201
+        content: |-
+          {
+            "message": "Registro exitoso",
+            "user": {
+              "id": 4,
+              "cedula": "1300000099",
+              "nombre": "Juan Carlos Pérez",
+              "email": "juan@uleam.edu.ec",
+              "activo": true,
+              "rol": "usuario",
+              "dias_para_vencer": 90,
+              "miembro_desde": "13/04/2026"
+            },
+            "token": "4|abc123xyz..."
+          }
+        headers: []
+        description: 'Registro exitoso'
+      -
+        custom: []
+        status: 422
+        content: |-
+          {
+            "message": "Error de validación",
+            "errors": {"cedula": ["La cédula ecuatoriana no es válida."]}
+          }
+        headers: []
+        description: 'Cédula inválida'
+      -
+        custom: []
+        status: 422
+        content: |-
+          {
+            "message": "Error de validación",
+            "errors": {"email": ["The email has already been taken."]}
+          }
+        headers: []
+        description: 'Email duplicado'
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/login
+    metadata:
+      custom: []
+      groupName: Autenticación
+      groupDescription: |-
+
+        Endpoints para registro, login, logout y gestión de contraseña.
+        El sistema usa Laravel Sanctum con tokens Bearer.
+      subgroup: ''
+      subgroupDescription: ''
+      title: Login
+      description: |-
+        Inicia sesión con cédula y contraseña. Retorna el token Bearer para usar en endpoints protegidos.
+        Invalida tokens anteriores — solo una sesión activa a la vez.
+        Verifica que la cuenta esté activa y que la contraseña no haya expirado (90 días).
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      cedula:
+        custom: []
+        name: cedula
+        description: 'Cédula ecuatoriana.'
+        required: true
+        example: '1300000001'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      password:
+        custom: []
+        name: password
+        description: Contraseña.
+        required: true
+        example: Admin1234!
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      cedula: '1300000001'
+      password: Admin1234!
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "message": "Inicio de sesión exitoso",
+            "user": {
+              "id": 1,
+              "cedula": "1300000001",
+              "nombre": "Administrador ULEAM",
+              "email": "admin@uleam.edu.ec",
+              "activo": true,
+              "rol": "admin",
+              "dias_para_vencer": 85
+            },
+            "token": "1|GwT1eMcqABR5AeCiUgmNOBSJZlcOvZlzm2Kr1fVYd7c9feaa"
+          }
+        headers: []
+        description: 'Login exitoso'
+      -
+        custom: []
+        status: 401
+        content: '{"message": "Cédula o contraseña incorrecta"}'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 403
+        content: '{"message": "Tu cuenta está desactivada. Contacta al administrador."}'
+        headers: []
+        description: 'Cuenta desactivada'
+      -
+        custom: []
+        status: 403
+        content: |-
+          {
+            "message": "Tu contraseña ha expirado. Debes cambiarla.",
+            "require_password_change": true,
+            "dias_sin_cambiar": 95
+          }
+        headers: []
+        description: 'Contraseña expirada'
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/logout
+    metadata:
+      custom: []
+      groupName: Autenticación
+      groupDescription: |-
+
+        Endpoints para registro, login, logout y gestión de contraseña.
+        El sistema usa Laravel Sanctum con tokens Bearer.
+      subgroup: ''
+      subgroupDescription: ''
+      title: Logout
+      description: 'Cierra la sesión actual invalidando el token Bearer activo.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{"message": "Sesión cerrada correctamente"}'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/update-password
+    metadata:
+      custom: []
+      groupName: Autenticación
+      groupDescription: |-
+
+        Endpoints para registro, login, logout y gestión de contraseña.
+        El sistema usa Laravel Sanctum con tokens Bearer.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Actualizar contraseña'
+      description: |-
+        Cambia la contraseña del usuario autenticado.
+        Invalida todos los tokens anteriores y retorna un nuevo token.
+        La nueva contraseña no puede ser igual a la actual.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      current_password:
+        custom: []
+        name: current_password
+        description: 'Contraseña actual.'
+        required: true
+        example: Admin1234!
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      new_password:
+        custom: []
+        name: new_password
+        description: 'Nueva contraseña mínimo 8 caracteres.'
+        required: true
+        example: NuevoPass123!
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      new_password_confirmation:
+        custom: []
+        name: new_password_confirmation
+        description: 'Confirmación de nueva contraseña.'
+        required: true
+        example: NuevoPass123!
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      current_password: Admin1234!
+      new_password: NuevoPass123!
+      new_password_confirmation: NuevoPass123!
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "message": "Contraseña actualizada correctamente",
+            "user": {"id": 1, "cedula": "1300000001", "nombre": "Administrador ULEAM"},
+            "token": "5|newtoken123..."
+          }
+        headers: []
+        description: Éxito
+      -
+        custom: []
+        status: 403
+        content: '{"error": "La contraseña actual no es correcta"}'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 422
+        content: |-
+          {
+            "message": "Error de validación",
+            "errors": {"new_password": ["The new password and current password must be different."]}
+          }
+        headers: []
+        description: 'Misma contraseña'
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/me
+    metadata:
+      custom: []
+      groupName: Autenticación
+      groupDescription: |-
+
+        Endpoints para registro, login, logout y gestión de contraseña.
+        El sistema usa Laravel Sanctum con tokens Bearer.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Usuario autenticado'
+      description: |-
+        Retorna los datos completos del usuario con sesión activa.
+        Útil para Flutter al iniciar la app y verificar el estado de la sesión.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "user": {
+              "id": 1,
+              "cedula": "1300000001",
+              "nombre": "Administrador ULEAM",
+              "email": "admin@uleam.edu.ec",
+              "activo": true,
+              "rol": "admin",
+              "dias_para_vencer": 85,
+              "miembro_desde": "09/04/2026"
+            }
+          }
+        headers: []
+        description: Éxito
+      -
+        custom: []
+        status: 401
+        content: '{"message": "No autenticado"}'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null

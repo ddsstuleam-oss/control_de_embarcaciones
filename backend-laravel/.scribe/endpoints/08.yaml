@@ -1,0 +1,225 @@
+name: 'Admin — Dashboard'
+description: |-
+
+  Endpoints para el panel de control administrativo.
+  Proveen estadísticas en tiempo real y reportes históricos del sistema.
+  Todos los endpoints requieren rol admin.
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/admin/dashboard
+    metadata:
+      custom: []
+      groupName: 'Admin — Dashboard'
+      groupDescription: |-
+
+        Endpoints para el panel de control administrativo.
+        Proveen estadísticas en tiempo real y reportes históricos del sistema.
+        Todos los endpoints requieren rol admin.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Resumen general'
+      description: |-
+        Retorna un resumen completo del estado actual del sistema:
+        totales generales, actividad del día, mes actual, próximas reservas y ocupación por embarcación.
+        La ocupación se calcula con una sola query optimizada para evitar N+1.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "totales": {
+              "embarcaciones": 4,
+              "disponibles": 3,
+              "mantenimiento": 1,
+              "usuarios": 5,
+              "reservas_total": 10,
+              "pasajeros_total": 25
+            },
+            "hoy": {
+              "reservas": 2,
+              "pasajeros": 5,
+              "canceladas": 0
+            },
+            "mes_actual": {
+              "reservas": 8,
+              "pasajeros": 20,
+              "canceladas": 1
+            },
+            "proximas_reservas": [
+              {
+                "id": 1,
+                "fecha": "2026-04-13",
+                "embarcacion": "Lancha Uleam I",
+                "usuario": "Estudiante Test",
+                "personas": 2,
+                "estado": "confirmada"
+              }
+            ],
+            "ocupacion_hoy": [
+              {
+                "id": 1,
+                "nombre": "Lancha Uleam I",
+                "capacidad": 25,
+                "estado": "disponible",
+                "reservados": 10,
+                "disponibles": 15,
+                "porcentaje": 40.0
+              }
+            ]
+          }
+        headers: []
+        description: Éxito
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/admin/estadisticas
+    metadata:
+      custom: []
+      groupName: 'Admin — Dashboard'
+      groupDescription: |-
+
+        Endpoints para el panel de control administrativo.
+        Proveen estadísticas en tiempo real y reportes históricos del sistema.
+        Todos los endpoints requieren rol admin.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Estadísticas por rango de fechas'
+      description: |-
+        Retorna estadísticas detalladas filtradas por rango de fechas.
+        Por defecto retorna el mes actual.
+        Incluye: reservas por día, por embarcación, por tipo de pasajero, por estado y top usuarios.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      desde:
+        custom: []
+        name: desde
+        description: 'Fecha de inicio (YYYY-MM-DD). Default: primer día del mes actual.'
+        required: false
+        example: '2026-04-01'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      hasta:
+        custom: []
+        name: hasta
+        description: 'Fecha de fin (YYYY-MM-DD). Default: hoy.'
+        required: false
+        example: '2026-04-30'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      desde: '2026-04-01'
+      hasta: '2026-04-30'
+    bodyParameters:
+      desde:
+        custom: []
+        name: desde
+        description: validation.date.
+        required: false
+        example: '2026-04-14T23:32:05'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      hasta:
+        custom: []
+        name: hasta
+        description: 'validation.date validation.after_or_equal.'
+        required: false
+        example: '2107-05-14'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      desde: '2026-04-14T23:32:05'
+      hasta: '2107-05-14'
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "rango": {
+              "desde": "2026-04-01",
+              "hasta": "2026-04-30"
+            },
+            "por_dia": [
+              {"fecha": "2026-04-13", "total_reservas": 2, "total_pasajeros": 5}
+            ],
+            "por_embarcacion": [
+              {"embarcacion": "Lancha Uleam I", "total_reservas": 5, "total_pasajeros": 12}
+            ],
+            "por_tipo": [
+              {"tipo": "estudiante", "total": 8},
+              {"tipo": "externo", "total": 3}
+            ],
+            "por_estado": [
+              {"estado": "confirmada", "total": 8},
+              {"estado": "cancelada", "total": 1}
+            ],
+            "top_usuarios": [
+              {"nombre": "Estudiante Test", "email": "estudiante@uleam.edu.ec", "total_reservas": 3}
+            ]
+          }
+        headers: []
+        description: Éxito
+      -
+        custom: []
+        status: 422
+        content: |-
+          {
+            "message": "Error de validación",
+            "errors": {"hasta": ["The hasta field must be a date after or equal to desde."]}
+          }
+        headers: []
+        description: 'Fechas inválidas'
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null

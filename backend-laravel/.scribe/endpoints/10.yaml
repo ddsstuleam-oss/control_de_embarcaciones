@@ -1,0 +1,593 @@
+name: 'Admin — Usuarios'
+description: |-
+
+  Endpoints para gestión completa de usuarios del sistema.
+  Todos los endpoints requieren rol admin.
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/admin/usuarios
+    metadata:
+      custom: []
+      groupName: 'Admin — Usuarios'
+      groupDescription: |-
+
+        Endpoints para gestión completa de usuarios del sistema.
+        Todos los endpoints requieren rol admin.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Listar usuarios'
+      description: 'Retorna todos los usuarios del sistema con filtros opcionales. Paginado.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      activo:
+        custom: []
+        name: activo
+        description: 'Filtrar por estado: true=activos, false=inactivos.'
+        required: false
+        example: true
+        type: boolean
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      rol:
+        custom: []
+        name: rol
+        description: 'Filtrar por rol: admin, operador, usuario.'
+        required: false
+        example: usuario
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      buscar:
+        custom: []
+        name: buscar
+        description: 'Buscar por nombre, cédula o email.'
+        required: false
+        example: Juan
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      per_page:
+        custom: []
+        name: per_page
+        description: 'Resultados por página (default: 20).'
+        required: false
+        example: 10
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      activo: true
+      rol: usuario
+      buscar: Juan
+      per_page: 10
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "data": [
+              {
+                "id": 3,
+                "cedula": "1300000003",
+                "nombre": "Estudiante Test",
+                "email": "estudiante@uleam.edu.ec",
+                "activo": true,
+                "rol": "usuario",
+                "dias_para_vencer": 85,
+                "miembro_desde": "09/04/2026"
+              }
+            ],
+            "current_page": 1,
+            "total": 3,
+            "per_page": 20
+          }
+        headers: []
+        description: Éxito
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/admin/usuarios
+    metadata:
+      custom: []
+      groupName: 'Admin — Usuarios'
+      groupDescription: |-
+
+        Endpoints para gestión completa de usuarios del sistema.
+        Todos los endpoints requieren rol admin.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Crear usuario'
+      description: |-
+        Crea un nuevo usuario desde el panel de administración.
+        Permite asignar cualquier rol directamente.
+        La cédula debe ser ecuatoriana válida.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      cedula:
+        custom: []
+        name: cedula
+        description: 'Cédula ecuatoriana válida de 10 dígitos.'
+        required: true
+        example: '1300000099'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      name:
+        custom: []
+        name: name
+        description: 'Nombre completo.'
+        required: true
+        example: 'María García'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      email:
+        custom: []
+        name: email
+        description: 'Correo electrónico único.'
+        required: true
+        example: maria@uleam.edu.ec
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      rol:
+        custom: []
+        name: rol
+        description: 'Rol asignado: admin, operador, usuario.'
+        required: true
+        example: operador
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      password:
+        custom: []
+        name: password
+        description: 'Contraseña inicial mínimo 8 caracteres.'
+        required: true
+        example: Temporal123!
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      cedula: '1300000099'
+      name: 'María García'
+      email: maria@uleam.edu.ec
+      rol: operador
+      password: Temporal123!
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 201
+        content: |-
+          {
+            "message": "Usuario creado correctamente",
+            "usuario": {
+              "id": 5,
+              "cedula": "1300000099",
+              "nombre": "María García",
+              "email": "maria@uleam.edu.ec",
+              "activo": true,
+              "rol": "operador"
+            }
+          }
+        headers: []
+        description: Creado
+      -
+        custom: []
+        status: 422
+        content: |-
+          {
+            "message": "Error de validación",
+            "errors": {"cedula": ["La cédula ecuatoriana no es válida."]}
+          }
+        headers: []
+        description: 'Cédula inválida'
+      -
+        custom: []
+        status: 422
+        content: |-
+          {
+            "message": "Error de validación",
+            "errors": {"email": ["The email has already been taken."]}
+          }
+        headers: []
+        description: 'Email duplicado'
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: 'api/admin/usuarios/{id}'
+    metadata:
+      custom: []
+      groupName: 'Admin — Usuarios'
+      groupDescription: |-
+
+        Endpoints para gestión completa de usuarios del sistema.
+        Todos los endpoints requieren rol admin.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Ver usuario'
+      description: 'Retorna el detalle de un usuario con sus reservas asociadas.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'ID del usuario.'
+        required: true
+        example: 3
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: 3
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "usuario": {
+              "id": 3,
+              "cedula": "1300000003",
+              "nombre": "Estudiante Test",
+              "email": "estudiante@uleam.edu.ec",
+              "activo": true,
+              "rol": "usuario"
+            },
+            "total_reservas": 5
+          }
+        headers: []
+        description: Éxito
+      -
+        custom: []
+        status: 404
+        content: '{"message": "Recurso no encontrado"}'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PATCH
+    uri: 'api/admin/usuarios/{id}/toggle'
+    metadata:
+      custom: []
+      groupName: 'Admin — Usuarios'
+      groupDescription: |-
+
+        Endpoints para gestión completa de usuarios del sistema.
+        Todos los endpoints requieren rol admin.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Activar / Desactivar usuario'
+      description: |-
+        Alterna el estado activo/inactivo de un usuario.
+        Al desactivar, se cierran todas sus sesiones activas.
+        No se puede desactivar la propia cuenta.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'ID del usuario.'
+        required: true
+        example: 3
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: 3
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "message": "Usuario desactivado correctamente",
+            "activo": false
+          }
+        headers: []
+        description: Desactivado
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "message": "Usuario activado correctamente",
+            "activo": true
+          }
+        headers: []
+        description: Activado
+      -
+        custom: []
+        status: 400
+        content: '{"error": "No puedes desactivar tu propia cuenta"}'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 404
+        content: '{"message": "Recurso no encontrado"}'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PATCH
+    uri: 'api/admin/usuarios/{id}/rol'
+    metadata:
+      custom: []
+      groupName: 'Admin — Usuarios'
+      groupDescription: |-
+
+        Endpoints para gestión completa de usuarios del sistema.
+        Todos los endpoints requieren rol admin.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Cambiar rol'
+      description: |-
+        Cambia el rol de un usuario del sistema.
+        No se puede cambiar el propio rol.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'ID del usuario.'
+        required: true
+        example: 3
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: 3
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      rol:
+        custom: []
+        name: rol
+        description: 'Nuevo rol: admin, operador, usuario.'
+        required: true
+        example: operador
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      rol: operador
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "message": "Rol actualizado correctamente",
+            "usuario": {
+              "id": 3,
+              "nombre": "Estudiante Test",
+              "rol": "operador"
+            }
+          }
+        headers: []
+        description: Éxito
+      -
+        custom: []
+        status: 400
+        content: '{"error": "No puedes cambiar tu propio rol"}'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 404
+        content: '{"message": "Recurso no encontrado"}'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 422
+        content: |-
+          {
+            "message": "Error de validación",
+            "errors": {"rol": ["The selected rol is invalid."]}
+          }
+        headers: []
+        description: 'Rol inválido'
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - DELETE
+    uri: 'api/admin/usuarios/{id}'
+    metadata:
+      custom: []
+      groupName: 'Admin — Usuarios'
+      groupDescription: |-
+
+        Endpoints para gestión completa de usuarios del sistema.
+        Todos los endpoints requieren rol admin.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Eliminar usuario'
+      description: |-
+        Elimina un usuario del sistema.
+        No se puede eliminar la propia cuenta.
+        No se puede eliminar si tiene reservas futuras activas.
+        Cierra todas las sesiones del usuario antes de eliminarlo.
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      id:
+        custom: []
+        name: id
+        description: 'ID del usuario.'
+        required: true
+        example: 3
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      id: 3
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: '{"message": "Usuario eliminado correctamente"}'
+        headers: []
+        description: ''
+      -
+        custom: []
+        status: 400
+        content: '{"error": "No puedes eliminar tu propia cuenta"}'
+        headers: []
+        description: 'Propia cuenta'
+      -
+        custom: []
+        status: 400
+        content: |-
+          {
+            "error": "El usuario tiene reservas futuras activas",
+            "reservas_futuras": 2
+          }
+        headers: []
+        description: 'Reservas activas'
+      -
+        custom: []
+        status: 404
+        content: '{"message": "Recurso no encontrado"}'
+        headers: []
+        description: ''
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null

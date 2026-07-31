@@ -1,0 +1,292 @@
+name: Perfil
+description: |-
+
+  Endpoints para gestión del perfil del usuario autenticado.
+endpoints:
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/perfil
+    metadata:
+      custom: []
+      groupName: Perfil
+      groupDescription: |-
+
+        Endpoints para gestión del perfil del usuario autenticado.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Ver mi perfil'
+      description: 'Retorna los datos del usuario autenticado junto con estadísticas de sus reservas.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "usuario": {
+              "id": 3,
+              "cedula": "1300000003",
+              "nombre": "Estudiante Test",
+              "email": "estudiante@uleam.edu.ec",
+              "activo": true,
+              "rol": "usuario",
+              "dias_para_vencer": 85,
+              "miembro_desde": "09/04/2026"
+            },
+            "estadisticas": {
+              "total_reservas": 5,
+              "reservas_activas": 2,
+              "reservas_canceladas": 1
+            }
+          }
+        headers: []
+        description: Éxito
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - PUT
+    uri: api/perfil
+    metadata:
+      custom: []
+      groupName: Perfil
+      groupDescription: |-
+
+        Endpoints para gestión del perfil del usuario autenticado.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Actualizar perfil'
+      description: 'Actualiza el nombre y/o email del usuario autenticado.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      name:
+        custom: []
+        name: name
+        description: 'Nombre completo del usuario.'
+        required: false
+        example: 'Juan Carlos Pérez'
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+      email:
+        custom: []
+        name: email
+        description: 'Correo electrónico único.'
+        required: false
+        example: juan@uleam.edu.ec
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      name: 'Juan Carlos Pérez'
+      email: juan@uleam.edu.ec
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "message": "Perfil actualizado correctamente",
+            "usuario": {
+              "id": 3,
+              "cedula": "1300000003",
+              "nombre": "Juan Carlos Pérez",
+              "email": "juan@uleam.edu.ec",
+              "rol": "usuario"
+            }
+          }
+        headers: []
+        description: Éxito
+      -
+        custom: []
+        status: 422
+        content: |-
+          {
+            "message": "Error de validación",
+            "errors": {"email": ["The email has already been taken."]}
+          }
+        headers: []
+        description: 'Email duplicado'
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/perfil/reservas
+    metadata:
+      custom: []
+      groupName: Perfil
+      groupDescription: |-
+
+        Endpoints para gestión del perfil del usuario autenticado.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Historial de reservas'
+      description: 'Retorna el historial paginado de reservas del usuario autenticado.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      per_page:
+        custom: []
+        name: per_page
+        description: 'Resultados por página (default: 10).'
+        required: false
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      per_page: 5
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "data": [
+              {
+                "id": 1,
+                "fecha": "2026-05-10",
+                "total_personas": 2,
+                "estado": "confirmada",
+                "embarcacion": {"nombre": "Lancha Uleam I"},
+                "boleto": {"codigo_qr": "01KP2EZ650JKEFGPEZHGQWM5PD", "estado": "valido"}
+              }
+            ],
+            "current_page": 1,
+            "total": 5,
+            "per_page": 10
+          }
+        headers: []
+        description: Éxito
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
+    uri: api/perfil/actividades
+    metadata:
+      custom: []
+      groupName: Perfil
+      groupDescription: |-
+
+        Endpoints para gestión del perfil del usuario autenticado.
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Historial de actividad'
+      description: 'Retorna el historial paginado de actividades registradas del usuario autenticado.'
+      authenticated: true
+      deprecated: false
+    headers:
+      Authorization: 'Bearer {TU_TOKEN_AQUI}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      per_page:
+        custom: []
+        name: per_page
+        description: 'Resultados por página (default: 20).'
+        required: false
+        example: 10
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      per_page: 10
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        custom: []
+        status: 200
+        content: |-
+          {
+            "data": [
+              {
+                "id": 1,
+                "accion": "login",
+                "descripcion": "Inicio de sesión exitoso",
+                "ip": "127.0.0.1",
+                "dispositivo": "Android",
+                "fecha": "13/04/2026 21:55"
+              }
+            ],
+            "current_page": 1,
+            "total": 10,
+            "per_page": 20
+          }
+        headers: []
+        description: Éxito
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 3V5EgbkvZcDPa166h8fd4ae'
+    controller: null
+    method: null
+    route: null
