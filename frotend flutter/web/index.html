@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html translate="no">
+<head>
+  <!--
+    El renderer HTML de Flutter Web pinta el texto como nodos reales del DOM
+    (a diferencia de CanvasKit, que lo dibuja como píxeles). Eso lo deja
+    visible para el traductor de Chrome, que al reescribirlo choca con el
+    posicionamiento absoluto de Flutter y produce texto superpuesto/corrupto.
+    Estas dos líneas le piden a Chrome que nunca traduzca esta página.
+  -->
+  <meta name="google" content="notranslate">
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A new Flutter project.">
+
+  <!-- iOS meta tags & icons -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="uleam_embarcaciones">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <!-- cropperjs (requerido por image_cropper en web) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+
+  <title>uleam_embarcaciones</title>
+  <link rel="manifest" href="manifest.json">
+
+  <!--
+    Flutter registra un Service Worker aunque el build se genere con
+    --pwa-strategy=none (esa bandera ya no lo evita en esta versión del
+    tooling). Ese SW es lo que deja la app "pegada" en una versión vieja:
+    el navegador no lo reemplaza hasta cerrar todas las pestañas del sitio.
+    Bloqueamos el registro de uno nuevo y desinstalamos cualquiera que haya
+    quedado de una visita anterior, para que siempre cargue el build actual.
+  -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register = () =>
+        Promise.reject(new Error('Service worker deshabilitado'));
+      navigator.serviceWorker.getRegistrations().then((regs) => {
+        regs.forEach((reg) => reg.unregister());
+      });
+      if (window.caches) {
+        caches.keys().then((keys) => keys.forEach((key) => caches.delete(key)));
+      }
+    }
+  </script>
+</head>
+<body>
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

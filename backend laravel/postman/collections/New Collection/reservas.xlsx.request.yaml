@@ -1,0 +1,12 @@
+$kind: http-request
+url: http://localhost:8000/api/admin/reportes/excel-reservas?desde=2026-05-01&hasta=2026-05-31
+method: GET
+queryParams:
+  desde: 2026-05-01
+  hasta: 2026-05-31
+auth:
+  type: bearer
+  credentials:
+    token: z33M7RMmbJ9mLb3RNvzjWgc7QWNr5IVjklTbWswTbdf6d2aa
+examples: .resources/reservas.xlsx.resources/examples
+order: 1776135051525
