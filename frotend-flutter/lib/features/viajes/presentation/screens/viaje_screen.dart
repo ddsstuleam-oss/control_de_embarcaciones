@@ -1279,6 +1279,8 @@ class _EvidenciaSection extends StatelessWidget {
                         width: 80,
                         height: 80,
                         fit: BoxFit.cover,
+                        memCacheWidth: 240,
+                        memCacheHeight: 240,
                         placeholder: (_, __) => Container(
                           width: 80,
                           height: 80,

@@ -38,7 +38,13 @@ class UserAvatar extends StatelessWidget {
     final avatar = CircleAvatar(
       radius:          radius,
       backgroundColor: backgroundColor,
-      backgroundImage: tieneFoto ? CachedNetworkImageProvider(fotoUrl!) : null,
+      backgroundImage: tieneFoto
+          ? CachedNetworkImageProvider(
+              fotoUrl!,
+              maxWidth:  (radius * 2 * 3).round(),
+              maxHeight: (radius * 2 * 3).round(),
+            )
+          : null,
       onBackgroundImageError: tieneFoto ? (_, __) {} : null,
       child: tieneFoto
           ? null
@@ -162,6 +168,8 @@ class _PreviewFotoPerfil extends StatelessWidget {
                 width:    tamano,
                 height:   tamano,
                 fit:      BoxFit.cover,
+                memCacheWidth:  (tamano * 3).round(),
+                memCacheHeight: (tamano * 3).round(),
               ),
             ),
           ),

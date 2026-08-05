@@ -277,6 +277,7 @@ class AdminEmbarcacionesScreen extends ConsumerWidget {
                         height:   140,
                         width:    double.infinity,
                         fit:      BoxFit.cover,
+                        memCacheWidth: 800,
                         placeholder: (_, __) => Container(
                           height: 140,
                           color:  Colors.grey[100],

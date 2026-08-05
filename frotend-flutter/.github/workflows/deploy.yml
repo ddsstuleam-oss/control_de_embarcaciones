@@ -23,7 +23,7 @@ jobs:
         run: flutter pub get
 
       - name: Build web
-        run: flutter build web --release --pwa-strategy=none --web-renderer=html
+        run: flutter build web --release --pwa-strategy=none --web-renderer=canvaskit
 
       - name: Load SSH deploy key
         uses: webfactory/ssh-agent@v0.9.0

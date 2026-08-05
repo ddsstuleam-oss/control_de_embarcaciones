@@ -551,6 +551,7 @@ class _EmbarcacionCardState extends State<_EmbarcacionCard> {
                     height: 170,
                     width: double.infinity,
                     fit: BoxFit.cover,
+                    memCacheWidth: 800,
                     placeholder: (_, __) => _ImagenFallback(estilo: estilo),
                     errorWidget: (_, __, ___) =>
                         _ImagenFallback(estilo: estilo),
