@@ -13,6 +13,7 @@ class UserResource extends JsonResource
             'cedula'              => $this->cedula,
             'nombre'              => $this->name,
             'email'               => $this->email,
+            'email_pendiente'     => $this->email_pendiente,
             'telefono'            => $this->telefono,
             'activo'              => $this->activo,
             'rol'                 => $this->getRoleNames()->first(),

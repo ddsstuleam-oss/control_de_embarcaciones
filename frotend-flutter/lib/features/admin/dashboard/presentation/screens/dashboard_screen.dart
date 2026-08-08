@@ -189,8 +189,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             n: _n,
           );
 
-          if (kIsWeb) {
-            final isDesktop = Responsive.isDesktop(context);
+          // El layout de tarjetas de escritorio (con fl_chart, padding
+          // amplio y filas de 2 columnas) solo tiene sentido con pantalla
+          // ancha real - en un celular (sea app nativa o el navegador del
+          // celular) se usa el mismo layout compacto de siempre.
+          if (kIsWeb && Responsive.isDesktop(context)) {
             final ocupacionCard = _OcupacionCard(ocupacionHoy: ocupacionHoy);
 
             return RefreshIndicator(
@@ -203,39 +206,27 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     if (banner != null) ...[banner, const SizedBox(height: 18)],
                     resumenGeneral,
                     const SizedBox(height: 18),
-                    if (isDesktop)
-                      IntrinsicHeight(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(flex: 3, child: ocupacionCard),
-                            const SizedBox(width: 16),
-                            Expanded(flex: 2, child: actividad),
-                          ],
-                        ),
-                      )
-                    else ...[
-                      ocupacionCard,
-                      const SizedBox(height: 16),
-                      actividad,
-                    ],
+                    IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(flex: 3, child: ocupacionCard),
+                          const SizedBox(width: 16),
+                          Expanded(flex: 2, child: actividad),
+                        ],
+                      ),
+                    ),
                     const SizedBox(height: 18),
-                    if (isDesktop)
-                      IntrinsicHeight(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(child: viajesEnCurso),
-                            const SizedBox(width: 16),
-                            Expanded(child: proximasReservas),
-                          ],
-                        ),
-                      )
-                    else ...[
-                      viajesEnCurso,
-                      const SizedBox(height: 16),
-                      proximasReservas,
-                    ],
+                    IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(child: viajesEnCurso),
+                          const SizedBox(width: 16),
+                          Expanded(child: proximasReservas),
+                        ],
+                      ),
+                    ),
                     const SizedBox(height: 24),
                   ],
                 ),
@@ -243,7 +234,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             );
           }
 
-          // ── Móvil (sin cambios de comportamiento) ──────────────────────
+          // ── Móvil (app nativa o navegador de celular) ───────────────────
           return RefreshIndicator(
             onRefresh: () async => _refrescar(),
             child: SingleChildScrollView(

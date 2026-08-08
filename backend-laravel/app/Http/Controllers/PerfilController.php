@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Notification;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\ReservaResource;
 use App\Http\Resources\ActividadResource;
+use App\Notifications\VerifyEmailNotification;
 
 /**
  * @group Perfil
@@ -62,12 +64,13 @@ class PerfilController extends Controller
     /**
      * Actualizar perfil
      *
-     * Actualiza el nombre y/o email del usuario autenticado.
+     * Actualiza el nombre y/o telefono del usuario autenticado. El email no
+     * se cambia aqui - ver solicitarCambioEmail()/confirmarCambioEmail(),
+     * que exigen verificar el correo nuevo antes de aplicarlo.
      *
      * @authenticated
      *
      * @bodyParam name string Nombre completo del usuario. Example: Juan Carlos Pérez
-     * @bodyParam email string Correo electrónico único. Example: juan@uleam.edu.ec
      * @bodyParam telefono string Teléfono de contacto (7 a 10 dígitos). Example: 0991234567
      *
      * @response 200 scenario="Éxito" {
@@ -80,10 +83,6 @@ class PerfilController extends Controller
      *     "rol": "usuario"
      *   }
      * }
-     * @response 422 scenario="Email duplicado" {
-     *   "message": "Error de validación",
-     *   "errors": {"email": ["The email has already been taken."]}
-     * }
      */
     public function update(Request $request)
     {
@@ -91,16 +90,117 @@ class PerfilController extends Controller
 
         $request->validate([
             'name'     => 'sometimes|string|max:255',
-            'email'    => 'sometimes|email|unique:users,email,' . $user->id,
             'telefono' => 'sometimes|digits_between:7,10',
         ], [
             'telefono.digits_between' => 'El teléfono debe tener entre 7 y 10 dígitos.',
         ]);
 
-        $user->update($request->only(['name', 'email', 'telefono']));
+        $user->update($request->only(['name', 'telefono']));
 
         return response()->json([
             'message' => 'Perfil actualizado correctamente',
+            'usuario' => new UserResource($user),
+        ]);
+    }
+
+    /**
+     * Solicitar cambio de email
+     *
+     * Envia un codigo de verificacion de 6 digitos al correo nuevo. El
+     * correo actual sigue activo hasta que se confirme el codigo con
+     * confirmarCambioEmail().
+     *
+     * @authenticated
+     *
+     * @bodyParam email string required Correo electronico nuevo. Example: nuevo@uleam.edu.ec
+     *
+     * @response 200 scenario="Éxito" {
+     *   "message": "Código de verificación enviado a tu nuevo correo."
+     * }
+     */
+    public function solicitarCambioEmail(Request $request)
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'email' => 'required|email|unique:users,email',
+        ], [
+            'email.unique' => 'Ese correo ya está en uso por otra cuenta.',
+        ]);
+
+        if ($request->email === $user->email) {
+            return response()->json([
+                'error' => 'Ese ya es tu correo actual.',
+            ], 422);
+        }
+
+        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+
+        $user->update([
+            'email_pendiente'         => $request->email,
+            'email_verification_code' => $code,
+            'email_code_expires_at'   => now()->addMinutes(30),
+        ]);
+
+        Notification::route('mail', $request->email)
+            ->notify(new VerifyEmailNotification($code));
+
+        return response()->json([
+            'message' => 'Código de verificación enviado a tu nuevo correo.',
+        ]);
+    }
+
+    /**
+     * Confirmar cambio de email
+     *
+     * Verifica el codigo enviado al correo nuevo y, si es valido, lo
+     * aplica como el email principal de la cuenta.
+     *
+     * @authenticated
+     *
+     * @bodyParam code string required Código de 6 dígitos recibido en el correo nuevo. Example: 482913
+     *
+     * @response 200 scenario="Éxito" {
+     *   "message": "Correo actualizado correctamente",
+     *   "usuario": {"id": 3, "email": "nuevo@uleam.edu.ec"}
+     * }
+     */
+    public function confirmarCambioEmail(Request $request)
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'code' => 'required|string|size:6',
+        ]);
+
+        if (!$user->email_pendiente) {
+            return response()->json([
+                'error' => 'No hay ningún cambio de correo pendiente.',
+            ], 400);
+        }
+
+        if (now()->isAfter($user->email_code_expires_at)) {
+            return response()->json([
+                'error' => 'El código ha expirado. Solicita uno nuevo.',
+            ], 400);
+        }
+
+        if ($user->email_verification_code !== $request->code) {
+            return response()->json([
+                'error' => 'Código incorrecto.',
+            ], 400);
+        }
+
+        $user->forceFill([
+            'email'                    => $user->email_pendiente,
+            'email_pendiente'          => null,
+            'email_verification_code'  => null,
+            'email_code_expires_at'    => null,
+            'email_verified_at'        => now(),
+        ])->save();
+
+        return response()->json([
+            'message' => 'Correo actualizado correctamente',
             'usuario' => new UserResource($user),
         ]);
     }

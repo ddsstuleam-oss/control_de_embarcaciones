@@ -9,7 +9,7 @@ final embarcacionesProvider = FutureProvider.autoDispose<List<Map<String, dynami
   return ref.read(embarcacionRepositoryProvider).getEmbarcaciones();
 });
 
-final disponibilidadProvider = FutureProvider.family<
+final disponibilidadProvider = FutureProvider.autoDispose.family<
     List<Map<String, dynamic>>,
     String>(
   (ref, fecha) {
@@ -18,6 +18,6 @@ final disponibilidadProvider = FutureProvider.family<
 );
 
 final embarcacionProvider =
-    FutureProvider.family<Map<String, dynamic>, int>((ref, id) {
+    FutureProvider.autoDispose.family<Map<String, dynamic>, int>((ref, id) {
   return ref.read(embarcacionRepositoryProvider).getEmbarcacion(id);
 });

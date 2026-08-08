@@ -49,6 +49,28 @@ class PerfilRepository {
     );
   }
 
+  Future<Map<String, dynamic>> solicitarCambioEmail(String email) async {
+    final response = await _dio.post(
+      ApiEndpoints.perfilEmail,
+      data: {'email': email},
+    );
+    if (response.statusCode == 200) return response.data;
+    throw Exception(
+      response.data['error'] ?? response.data['message'] ?? 'Error al solicitar el cambio de correo',
+    );
+  }
+
+  Future<Map<String, dynamic>> confirmarCambioEmail(String code) async {
+    final response = await _dio.post(
+      ApiEndpoints.perfilEmailConfirmar,
+      data: {'code': code},
+    );
+    if (response.statusCode == 200) return response.data;
+    throw Exception(
+      response.data['error'] ?? response.data['message'] ?? 'Error al confirmar el cambio de correo',
+    );
+  }
+
   Future<void> cambiarPassword({
     required String currentPassword,
     required String newPassword,

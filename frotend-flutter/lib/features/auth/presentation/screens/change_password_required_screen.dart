@@ -5,6 +5,7 @@ import '../../../../core/api/api_client.dart';
 import '../../../../core/api/api_endpoints.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/web_centered.dart';
+import '../../../../core/widgets/password_strength_meter.dart';
 import '../../providers/auth_provider.dart';
 
 class ChangePasswordRequiredScreen extends ConsumerStatefulWidget {
@@ -228,7 +229,7 @@ class _ChangePasswordRequiredScreenState
                         ),
                         const SizedBox(height: 4),
                         const Text(
-                          'La nueva contraseña debe tener mínimo 8 caracteres',
+                          'Mínimo 8 caracteres, con mayúsculas, minúsculas y números',
                           style: TextStyle(
                             fontSize: 12,
                             color: AppTheme.textMuted,
@@ -260,6 +261,7 @@ class _ChangePasswordRequiredScreenState
                         TextFormField(
                           controller: _newCtrl,
                           obscureText: _obscureNew,
+                          onChanged: (_) => setState(() {}),
                           decoration: InputDecoration(
                             labelText: 'Nueva contraseña',
                             prefixIcon: const Icon(Icons.lock_outline),
@@ -274,11 +276,20 @@ class _ChangePasswordRequiredScreenState
                           validator: (v) {
                             if (v == null || v.isEmpty) return 'Requerido';
                             if (v.length < 8) return 'Mínimo 8 caracteres';
-                            if (v == _currentCtrl.text)
+                            if (!RegExp(r'[a-z]').hasMatch(v) ||
+                                !RegExp(r'[A-Z]').hasMatch(v)) {
+                              return 'Combina mayúsculas y minúsculas';
+                            }
+                            if (!RegExp(r'[0-9]').hasMatch(v)) {
+                              return 'Incluye al menos un número';
+                            }
+                            if (v == _currentCtrl.text) {
                               return 'Debe ser diferente a la actual';
+                            }
                             return null;
                           },
                         ),
+                        PasswordStrengthMeter(password: _newCtrl.text),
                         const SizedBox(height: 14),
 
                         // Confirmar contraseña

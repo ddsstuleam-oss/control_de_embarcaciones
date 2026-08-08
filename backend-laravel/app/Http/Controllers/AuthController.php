@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 use App\Models\User;
 use App\Rules\CedulaEcuatoriana;
 use App\Http\Resources\UserResource;
@@ -60,7 +61,7 @@ class AuthController extends Controller
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
             'telefono' => 'required|digits_between:7,10',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()],
         ], [
             'cedula.required'    => 'La cédula es obligatoria.',
             'cedula.digits'      => 'La cédula debe tener exactamente 10 dígitos.',
@@ -73,6 +74,8 @@ class AuthController extends Controller
             'telefono.digits_between'   => 'El teléfono debe tener entre 7 y 10 dígitos.',
             'password.required'  => 'La contraseña es obligatoria.',
             'password.min'       => 'La contraseña debe tener mínimo 8 caracteres.',
+            'password.mixed'     => 'La contraseña debe combinar mayúsculas y minúsculas.',
+            'password.numbers'   => 'La contraseña debe incluir al menos un número.',
             'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
 
@@ -228,7 +231,18 @@ class AuthController extends Controller
     {
         $request->validate([
             'current_password' => 'required|string',
-            'new_password'     => 'required|string|min:8|confirmed|different:current_password',
+            'new_password'     => [
+                'required',
+                'confirmed',
+                'different:current_password',
+                Password::min(8)->mixedCase()->numbers(),
+            ],
+        ], [
+            'new_password.min'       => 'La contraseña debe tener mínimo 8 caracteres.',
+            'new_password.mixed'     => 'La contraseña debe combinar mayúsculas y minúsculas.',
+            'new_password.numbers'   => 'La contraseña debe incluir al menos un número.',
+            'new_password.confirmed' => 'Las contraseñas no coinciden.',
+            'new_password.different' => 'La nueva contraseña debe ser distinta a la actual.',
         ]);
 
         $user = $request->user();

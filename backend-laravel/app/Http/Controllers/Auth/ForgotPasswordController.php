@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Notifications\PasswordResetNotification;
+use Illuminate\Validation\Rules\Password;
 
 /**
  * @group Recuperación de contraseña
@@ -87,7 +88,12 @@ class ForgotPasswordController extends Controller
         $request->validate([
             'email'    => 'required|email',
             'token'    => 'required|string',
-            'password' => 'required|confirmed|min:6',
+            'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->numbers()],
+        ], [
+            'password.min'       => 'La contraseña debe tener mínimo 8 caracteres.',
+            'password.mixed'     => 'La contraseña debe combinar mayúsculas y minúsculas.',
+            'password.numbers'   => 'La contraseña debe incluir al menos un número.',
+            'password.confirmed' => 'Las contraseñas no coinciden.',
         ]);
 
         $reset = DB::table('password_resets')

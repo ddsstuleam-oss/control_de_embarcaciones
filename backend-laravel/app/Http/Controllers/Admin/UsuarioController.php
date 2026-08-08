@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Http\Resources\UserResource;
 use App\Rules\CedulaEcuatoriana;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Password;
 
 /**
  * @group Admin — Usuarios
@@ -237,7 +238,11 @@ class UsuarioController extends Controller
             'name'     => 'required|string|max:255',
             'email'    => 'required|email|unique:users,email',
             'rol'      => 'required|in:admin,operador,usuario',
-            'password' => 'required|string|min:8',
+            'password' => ['required', Password::min(8)->mixedCase()->numbers()],
+        ], [
+            'password.min'     => 'La contraseña debe tener mínimo 8 caracteres.',
+            'password.mixed'   => 'La contraseña debe combinar mayúsculas y minúsculas.',
+            'password.numbers' => 'La contraseña debe incluir al menos un número.',
         ]);
 
         $user = User::create([

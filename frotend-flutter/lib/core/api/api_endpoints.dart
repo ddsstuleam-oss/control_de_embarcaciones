@@ -75,10 +75,12 @@ class ApiEndpoints {
   static String embarcarBoleto(int id)              => '/boletos/$id/embarcar';
 
   // Perfil
-  static const String perfil             = '/perfil';
-  static const String perfilFoto         = '/perfil/foto';
-  static const String perfilReservas     = '/perfil/reservas';
-  static const String perfilActividades  = '/perfil/actividades';
+  static const String perfil               = '/perfil';
+  static const String perfilFoto           = '/perfil/foto';
+  static const String perfilReservas       = '/perfil/reservas';
+  static const String perfilActividades    = '/perfil/actividades';
+  static const String perfilEmail          = '/perfil/email';
+  static const String perfilEmailConfirmar = '/perfil/email/confirmar';
 
   // Actividad
   static const String actividad = '/actividad';

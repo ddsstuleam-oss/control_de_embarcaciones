@@ -16,6 +16,7 @@ protected $fillable = [
     'cedula',
     'name',
     'email',
+    'email_pendiente',
     'telefono',
     'password',
     'password_changed_at',

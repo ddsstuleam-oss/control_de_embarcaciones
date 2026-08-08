@@ -70,11 +70,13 @@ Route::middleware(['auth:sanctum', 'verified', 'password.age'])->group(function 
     /*
     |--- PERFIL -------------------------------------------------------------
     */
-    Route::get('/perfil',             [PerfilController::class, 'index']);
-    Route::put('/perfil',             [PerfilController::class, 'update']);
-    Route::post('/perfil/foto',       [PerfilController::class, 'subirFoto']);
-    Route::get('/perfil/reservas',    [PerfilController::class, 'reservas']);
-    Route::get('/perfil/actividades', [PerfilController::class, 'actividades']);
+    Route::get('/perfil',                    [PerfilController::class, 'index']);
+    Route::put('/perfil',                    [PerfilController::class, 'update']);
+    Route::post('/perfil/foto',              [PerfilController::class, 'subirFoto']);
+    Route::get('/perfil/reservas',           [PerfilController::class, 'reservas']);
+    Route::get('/perfil/actividades',        [PerfilController::class, 'actividades']);
+    Route::post('/perfil/email',             [PerfilController::class, 'solicitarCambioEmail']);
+    Route::post('/perfil/email/confirmar',   [PerfilController::class, 'confirmarCambioEmail']);
     Route::post('/actividad',         [ActividadController::class, 'store']);
 
     /*

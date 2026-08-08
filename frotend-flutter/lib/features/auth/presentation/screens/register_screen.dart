@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/auth_provider.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/widgets/password_strength_meter.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -211,6 +212,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                           TextFormField(
                             controller: _passwordCtrl,
                             obscureText: _obscure,
+                            onChanged: (_) => setState(() {}),
                             decoration: InputDecoration(
                               labelText: 'Contraseña',
                               prefixIcon: const Icon(Icons.lock_outline),
@@ -225,12 +227,21 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                               ),
                             ),
                             validator: (v) {
-                              if (v == null || v.isEmpty)
+                              if (v == null || v.isEmpty) {
                                 return 'Ingresa una contraseña';
+                              }
                               if (v.length < 8) return 'Mínimo 8 caracteres';
+                              if (!RegExp(r'[a-z]').hasMatch(v) ||
+                                  !RegExp(r'[A-Z]').hasMatch(v)) {
+                                return 'Combina mayúsculas y minúsculas';
+                              }
+                              if (!RegExp(r'[0-9]').hasMatch(v)) {
+                                return 'Incluye al menos un número';
+                              }
                               return null;
                             },
                           ),
+                          PasswordStrengthMeter(password: _passwordCtrl.text),
                           const SizedBox(height: 16),
 
                           // Confirmar contraseña

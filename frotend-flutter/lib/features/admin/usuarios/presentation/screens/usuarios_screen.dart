@@ -6,6 +6,7 @@ import '../../../../../core/theme/app_theme.dart';
 import '../../../../../core/widgets/admin_nav.dart';
 import '../../../../../core/widgets/admin_page_scaffold.dart';
 import '../../../../../core/widgets/empty_state_widget.dart';
+import '../../../../../core/widgets/password_strength_meter.dart';
 
 final usuariosProvider =
     FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
@@ -407,6 +408,7 @@ class _UsuariosScreenState extends ConsumerState<UsuariosScreen> {
                   TextFormField(
                     controller:  passCtrl,
                     obscureText: true,
+                    onChanged: (_) => setState(() {}),
                     decoration: const InputDecoration(
                       labelText:  'Contraseña',
                       prefixIcon: Icon(Icons.lock_outline),
@@ -414,9 +416,17 @@ class _UsuariosScreenState extends ConsumerState<UsuariosScreen> {
                     validator: (v) {
                       if (v == null || v.isEmpty) return 'Requerido';
                       if (v.length < 8) return 'Mínimo 8 caracteres';
+                      if (!RegExp(r'[a-z]').hasMatch(v) ||
+                          !RegExp(r'[A-Z]').hasMatch(v)) {
+                        return 'Combina mayúsculas y minúsculas';
+                      }
+                      if (!RegExp(r'[0-9]').hasMatch(v)) {
+                        return 'Incluye al menos un número';
+                      }
                       return null;
                     },
                   ),
+                  PasswordStrengthMeter(password: passCtrl.text),
                   const SizedBox(height: 12),
 
                   DropdownButtonFormField<String>(

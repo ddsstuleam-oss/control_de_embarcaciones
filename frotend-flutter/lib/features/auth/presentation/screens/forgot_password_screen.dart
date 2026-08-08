@@ -5,6 +5,7 @@ import '../../../../core/api/api_client.dart';
 import '../../../../core/api/api_endpoints.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/widgets/web_centered.dart';
+import '../../../../core/widgets/password_strength_meter.dart';
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -178,6 +179,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                           TextFormField(
                             controller: _passCtrl,
                             obscureText: _obscure,
+                            onChanged: (_) => setState(() {}),
                             decoration: InputDecoration(
                               labelText: 'Nueva contraseña',
                               prefixIcon: const Icon(Icons.lock_outline),
@@ -192,12 +194,21 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                               ),
                             ),
                             validator: (v) {
-                              if (v == null || v.isEmpty)
+                              if (v == null || v.isEmpty) {
                                 return 'Ingresa la nueva contraseña';
-                              if (v.length < 6) return 'Mínimo 6 caracteres';
+                              }
+                              if (v.length < 8) return 'Mínimo 8 caracteres';
+                              if (!RegExp(r'[a-z]').hasMatch(v) ||
+                                  !RegExp(r'[A-Z]').hasMatch(v)) {
+                                return 'Combina mayúsculas y minúsculas';
+                              }
+                              if (!RegExp(r'[0-9]').hasMatch(v)) {
+                                return 'Incluye al menos un número';
+                              }
                               return null;
                             },
                           ),
+                          PasswordStrengthMeter(password: _passCtrl.text),
                           const SizedBox(height: 16),
 
                           // Confirmar

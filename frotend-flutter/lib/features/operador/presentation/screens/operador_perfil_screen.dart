@@ -132,7 +132,18 @@ class OperadorPerfilScreen extends ConsumerWidget {
                             _Row(
                                 icon: Icons.email_outlined,
                                 label: 'Email',
-                                value: usuario['email'] ?? ''),
+                                value: usuario['email'] ?? '',
+                                subtitulo: (usuario['email_pendiente']
+                                                as String?)
+                                            ?.isNotEmpty ==
+                                        true
+                                    ? 'Confirmando cambio a: ${usuario['email_pendiente']}'
+                                    : null,
+                                onEdit: () => _cambiarEmail(
+                                  context,
+                                  ref,
+                                  usuario['email_pendiente'] as String?,
+                                )),
                             _Row(
                                 icon: Icons.calendar_today_outlined,
                                 label: 'Miembro desde',
@@ -266,6 +277,219 @@ class OperadorPerfilScreen extends ConsumerWidget {
     if (confirm == true) {
       await ref.read(authProvider.notifier).logout();
     }
+  }
+
+  Future<void> _cambiarEmail(
+    BuildContext context,
+    WidgetRef ref,
+    String? pendiente,
+  ) async {
+    final emailFormKey = GlobalKey<FormState>();
+    final codeFormKey = GlobalKey<FormState>();
+    final emailCtrl = TextEditingController(text: pendiente ?? '');
+    final codeCtrl = TextEditingController();
+    bool isLoading = false;
+    bool pidiendoCodigo = pendiente != null && pendiente.isNotEmpty;
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setState) => Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(ctx).viewInsets.bottom,
+            left: 24,
+            right: 24,
+            top: 24,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                pidiendoCodigo ? 'Confirma tu correo nuevo' : 'Cambiar correo',
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: AppTheme.primary,
+                ),
+              ),
+              const SizedBox(height: 8),
+              if (!pidiendoCodigo)
+                Form(
+                  key: emailFormKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextFormField(
+                        controller: emailCtrl,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: const InputDecoration(
+                          labelText: 'Correo nuevo',
+                          prefixIcon: Icon(Icons.email_outlined),
+                        ),
+                        validator: (v) {
+                          if (v == null || v.isEmpty) return 'Ingresa tu correo';
+                          if (!RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(v)) {
+                            return 'Correo inválido';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: isLoading
+                            ? null
+                            : () async {
+                                if (!emailFormKey.currentState!.validate()) return;
+                                setState(() => isLoading = true);
+                                try {
+                                  await ref
+                                      .read(perfilRepositoryProvider)
+                                      .solicitarCambioEmail(emailCtrl.text.trim());
+                                  setState(() {
+                                    isLoading = false;
+                                    pidiendoCodigo = true;
+                                  });
+                                } catch (e) {
+                                  setState(() => isLoading = false);
+                                  if (ctx.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(e
+                                            .toString()
+                                            .replaceAll('Exception: ', '')),
+                                        backgroundColor: AppTheme.error,
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 48),
+                        ),
+                        child: isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text('Enviar código'),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
+                )
+              else
+                Form(
+                  key: codeFormKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Te enviamos un código de 6 dígitos a ${emailCtrl.text}. Ingrésalo para confirmar el cambio.',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: AppTheme.textMuted,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextFormField(
+                        controller: codeCtrl,
+                        keyboardType: TextInputType.number,
+                        maxLength: 6,
+                        decoration: const InputDecoration(
+                          labelText: 'Código de verificación',
+                          prefixIcon: Icon(Icons.pin_outlined),
+                          counterText: '',
+                        ),
+                        validator: (v) {
+                          if (v == null || v.length != 6) {
+                            return 'Ingresa el código de 6 dígitos';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      ElevatedButton(
+                        onPressed: isLoading
+                            ? null
+                            : () async {
+                                if (!codeFormKey.currentState!.validate()) return;
+                                setState(() => isLoading = true);
+                                try {
+                                  final data = await ref
+                                      .read(perfilRepositoryProvider)
+                                      .confirmarCambioEmail(codeCtrl.text.trim());
+                                  final usuarioActualizado =
+                                      data['usuario'] as Map<String, dynamic>?;
+                                  if (usuarioActualizado != null) {
+                                    await ref
+                                        .read(authProvider.notifier)
+                                        .actualizarUsuario(usuarioActualizado);
+                                  }
+                                  if (ctx.mounted) {
+                                    Navigator.pop(ctx);
+                                    ref.invalidate(operadorPerfilProvider);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content:
+                                            Text('Correo actualizado correctamente'),
+                                        backgroundColor: AppTheme.success,
+                                      ),
+                                    );
+                                  }
+                                } catch (e) {
+                                  setState(() => isLoading = false);
+                                  if (ctx.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(e
+                                            .toString()
+                                            .replaceAll('Exception: ', '')),
+                                        backgroundColor: AppTheme.error,
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 48),
+                        ),
+                        child: isLoading
+                            ? const SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text('Confirmar correo'),
+                      ),
+                      TextButton(
+                        onPressed: isLoading
+                            ? null
+                            : () => setState(() => pidiendoCodigo = false),
+                        child: const Text('Usar otro correo'),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _cambiarPassword(BuildContext context, WidgetRef ref) async {
@@ -446,11 +670,15 @@ class _Row extends StatelessWidget {
   final String label;
   final String value;
   final Color? valueColor;
+  final String? subtitulo;
+  final VoidCallback? onEdit;
   const _Row(
       {required this.icon,
       required this.label,
       required this.value,
-      this.valueColor});
+      this.valueColor,
+      this.subtitulo,
+      this.onEdit});
 
   @override
   Widget build(BuildContext context) {
@@ -475,9 +703,28 @@ class _Row extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                       color: valueColor ?? AppTheme.primary,
                     )),
+                if (subtitulo != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Text(
+                      subtitulo!,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.accent,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
+          if (onEdit != null)
+            IconButton(
+              icon: const Icon(Icons.edit_outlined, size: 18),
+              color: AppTheme.textMuted,
+              visualDensity: VisualDensity.compact,
+              onPressed: onEdit,
+            ),
         ],
       ),
     );
